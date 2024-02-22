@@ -1,6 +1,7 @@
 const movieList = [
     {
         id: 0,
+        isChecked: false,
         img: "eternals.jpg",
         title: "이터널스",
         genre: "액션",
@@ -10,6 +11,7 @@ const movieList = [
 
     {
         id: 1,
+        isChecked: false,
         img: "venom.jpg",
         title: "베놈 2: 렛 데어 비 카니지",
         genre: "액션",
@@ -19,6 +21,7 @@ const movieList = [
 
     {
         id: 2,
+        isChecked: false,
         img: "parasite.jpg",
         title: "기생충",
         genre: "드라마",
@@ -28,6 +31,7 @@ const movieList = [
 
     {
         id: 3,
+        isChecked: false,
         img: "harrypoter_stone.jpg",
         title: "해리포터와 마법사의 돌",
         genre: "판타지",
@@ -37,6 +41,7 @@ const movieList = [
 
     {
         id: 4,
+        isChecked: false,
         img: "harrypoter_room.jpg",
         title: "해리포터와 비밀의 방",
         genre: "판타지",
@@ -46,6 +51,7 @@ const movieList = [
 
     {
         id: 5,
+        isChecked: false,
         img: "load_of_ring.jpg",
         title: "반지의제왕: 왕의 귀환",
         genre: "판타지",
@@ -55,6 +61,7 @@ const movieList = [
 
     {
         id: 6,
+        isChecked: false,
         img: "dune.jpg",
         title: "듄",
         genre: "모험",
@@ -64,6 +71,7 @@ const movieList = [
 
     {
         id: 7,
+        isChecked: false,
         img: "tomb_of_the_river.jpg",
         title: "강릉",
         genre: "범죄",

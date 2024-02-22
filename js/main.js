@@ -3,11 +3,20 @@ import movieList from "./movieList.js";
 const movies = document.getElementById("movies");
 const likes = document.getElementById("likes");
 const mainTitle = document.getElementById("main-title");
+const logo = document.querySelector(".logo");
 
-let searchList = [];
+let list = movieList;
 let myList = [];
 let movieCards;
 let marginLeft;
+let isError = false;
+
+logo.addEventListener("click", () => {
+    list = movieList;
+    mainTitle.style.display = "";
+    movies.style.height = "";
+    renderMovieList(list);
+});
 
 // 창 크기가 바뀌면 카드에 헤더 맞추기
 window.addEventListener("resize", () => {
@@ -21,19 +30,20 @@ const addMyList = (event) => {
     let clickedButton = event.currentTarget;
     let clickedKey = clickedButton.getAttribute("data-key");
     let clickedMovie = movieList[clickedKey];
+    clickedMovie.isChecked = true;
 
     let likedMovie = clickedMovie;
     myList.push(likedMovie);
     renderMyList();
-
-    // 버튼 disabled 처리
-    event.currentTarget.disabled = true;
+    renderMovieList(list);
 };
 
 // 리스트에서 영화 찜 삭제
 const deleteMyList = (event) => {
     let clickedButton = event.currentTarget;
     let clickedKey = clickedButton.getAttribute("data-key");
+    let clickedMovie = movieList[clickedKey];
+    clickedMovie.isChecked = false;
 
     for (let i = 0; i < myList.length; i++) {
         if (myList[i].id == clickedKey) {
@@ -42,14 +52,12 @@ const deleteMyList = (event) => {
     }
 
     renderMyList();
-
-    const buttons = document.querySelectorAll(".movie-like-button");
-    buttons[clickedKey].disabled = false;
+    !isError && renderMovieList(list);
 };
 
 // 영화 검색
 const searchClick = (event) => {
-    searchList = [];
+    list = [];
     event.preventDefault();
 
     let inputValue = document.querySelector(".search-input").value;
@@ -62,28 +70,31 @@ const searchClick = (event) => {
                     .toLowerCase()
                     .includes(inputValue.toLowerCase())
             ) {
-                searchList.push(movieList[i]);
+                list.push(movieList[i]);
             }
         }
 
-        if (searchList.length === 0) {
+        if (list.length === 0) {
             throw new Error("검색 결과가 없습니다.");
         }
 
         mainTitle.style.display = "none";
         movies.style.height = "calc(100vh - 138px - 65px)";
 
-        renderMovieList(searchList);
+        renderMovieList(list);
     } catch (error) {
         mainTitle.style.display = "none";
         movies.style.height = "calc(100vh - 138px - 65px)";
+        isError = true;
 
         renderError(error.message);
     }
+
+    document.querySelector(".search-input").value = "";
 };
 
 const searchEnter = (event) => {
-    searchList = [];
+    list = [];
 
     if (event.key == "Enter") {
         event.preventDefault();
@@ -98,24 +109,27 @@ const searchEnter = (event) => {
                         .toLowerCase()
                         .includes(inputValue.toLowerCase())
                 ) {
-                    searchList.push(movieList[i]);
+                    list.push(movieList[i]);
                 }
             }
 
-            if (searchList.length === 0) {
+            if (list.length === 0) {
                 throw new Error("검색 결과가 없습니다.");
             }
 
             mainTitle.style.display = "none";
             movies.style.height = "calc(100vh - 138px - 65px)";
 
-            renderMovieList(searchList);
+            renderMovieList(list);
         } catch (error) {
             mainTitle.style.display = "none";
             movies.style.height = "calc(100vh - 138px - 65px)";
+            isError = true;
 
             renderError(error.message);
         }
+
+        document.querySelector(".search-input").value = "";
     }
 };
 
@@ -126,8 +140,10 @@ searchForm.addEventListener("keydown", searchEnter);
 
 // 영화 목록 렌더
 const renderMovieList = (movieList) => {
+    isError = false;
     let innerHTML = movieList
         .map((item, index) => {
+            let isMovieChecked = item.isChecked ? "disabled" : "";
             return `<li class="movie-card">
         <img src="./img/${item.img}" alt="${item.title}" />
         <div class="details">
@@ -139,7 +155,7 @@ const renderMovieList = (movieList) => {
                     <div class="running-time">${item.runningTime}분</div>
                 </div>
             </div>
-            <button type="button" class="movie-like-button" data-key="${index}">
+            <button type="button" class="movie-like-button" data-key="${item.id}" ${isMovieChecked}>
                 <span class="text"> 찜 </span>
                 <span class="material-symbols-outlined">
                     favorite
@@ -219,4 +235,4 @@ const renderError = (error) => {
     movies.innerHTML = innerHTML;
 };
 
-renderMovieList(movieList);
+renderMovieList(list);
