@@ -1,16 +1,20 @@
 import movieList from "./movieList.js";
 
+// 간지나는 콘솔 출력
+console.log('\n\n%c🆂🆂🅰🅵🅻🅸🆇\n\n\n%c[Vanila.JS] %cFront-end Project\n\n%c © SSAFY 서울_7반_황민욱',
+    'font-size:32px; font-weight:bold;', 'font-size:14px; font-weight:bold;', 'font-size:14px;', 'font-size:12px; color: #555555;');
+
 const movies = document.getElementById("movies");
 const likes = document.getElementById("likes");
 const mainTitle = document.getElementById("main-title");
 const logo = document.querySelector(".logo");
 
 let list = movieList;
-let myList = [];
 let movieCards;
 let marginLeft;
 let isError = false;
 
+// 로고 클릭 후 메인 화면 표시
 logo.addEventListener("click", () => {
     list = movieList;
     mainTitle.style.display = "";
@@ -27,23 +31,29 @@ window.addEventListener("resize", () => {
 
 // 리스트에 영화 찜 넣기
 const addMyList = (event) => {
-    let clickedButton = event.currentTarget;
-    let clickedKey = clickedButton.getAttribute("data-key");
-    let clickedMovie = movieList[clickedKey];
+    const clickedButton = event.currentTarget;
+    const clickedKey = clickedButton.getAttribute("data-key");
+    const clickedMovie = movieList[clickedKey];
     clickedMovie.isChecked = true;
 
-    let likedMovie = clickedMovie;
-    myList.push(likedMovie);
-    renderMyList();
+    const myList = JSON.parse(localStorage.getItem('myList')); // 로컬 스토리지에서 가져오기.
+
+    myList.push(clickedMovie); // 선택한 영화 넣기
+
+    localStorage.setItem('myList', JSON.stringify(myList)); // 로컬 스토리지에 객체 배열 넣기
+
+    renderMyList(myList);
     renderMovieList(list);
 };
 
 // 리스트에서 영화 찜 삭제
 const deleteMyList = (event) => {
-    let clickedButton = event.currentTarget;
-    let clickedKey = clickedButton.getAttribute("data-key");
-    let clickedMovie = movieList[clickedKey];
+    const clickedButton = event.currentTarget;
+    const clickedKey = clickedButton.getAttribute("data-key");
+    const clickedMovie = movieList[clickedKey];
     clickedMovie.isChecked = false;
+
+    const myList = JSON.parse(localStorage.getItem('myList')); // 로컬 스토리지에서 가져오기.
 
     for (let i = 0; i < myList.length; i++) {
         if (myList[i].id == clickedKey) {
@@ -51,7 +61,9 @@ const deleteMyList = (event) => {
         }
     }
 
-    renderMyList();
+    localStorage.setItem('myList', JSON.stringify(myList)); // 로컬 스토리지에 객체 배열 넣기
+
+    renderMyList(myList);
     !isError && renderMovieList(list);
 };
 
@@ -99,7 +111,7 @@ const searchEnter = (event) => {
     if (event.key == "Enter") {
         event.preventDefault();
 
-        let inputValue = document.querySelector(".search-input").value;
+        const inputValue = document.querySelector(".search-input").value;
 
         // 검색 결과 없을 시 에러 핸들링
         try {
@@ -141,7 +153,7 @@ searchForm.addEventListener("keydown", searchEnter);
 // 영화 목록 렌더
 const renderMovieList = (movieList) => {
     isError = false;
-    let innerHTML = movieList
+    const innerHTML = movieList
         .map((item, index) => {
             let isMovieChecked = item.isChecked ? "disabled" : "";
             return `<li class="movie-card">
@@ -180,8 +192,8 @@ const renderMovieList = (movieList) => {
 };
 
 // 찜 리스트 렌더
-const renderMyList = () => {
-    let innerHTML = myList
+const renderMyList = (myList) => {
+    const innerHTML = myList
         .map((item) => {
             return `<div class="my-movie-container">
             <img
@@ -223,7 +235,7 @@ const renderMyList = () => {
 
 // 에러 렌더
 const renderError = (error) => {
-    let innerHTML = `<div class="error-container">
+    const innerHTML = `<div class="error-container">
     <span
         class="material-symbols-outlined"
         style="font-size: 64px; font-weight: 600"
@@ -236,3 +248,17 @@ const renderError = (error) => {
 };
 
 renderMovieList(list);
+if (localStorage.getItem('myList') === null) {
+    localStorage.setItem('myList', JSON.stringify([]));
+} else {
+    const myList = JSON.parse(localStorage.getItem('myList')); // 로컬 스토리지에서 가져오기.
+    renderMyList(myList);
+}
+
+/*
+
+[추후 리팩토링 테스크]
+- attribute에 id를 넣는게 최선의 방법일지?
+- innerHTML에 모든 리스트를 넣어서 처리하는 것이 아니라 하나씩 처리를 해보기.
+
+*/
