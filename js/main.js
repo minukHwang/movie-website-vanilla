@@ -76,7 +76,7 @@ const searchClick = (event) => {
     list = [];
     event.preventDefault();
 
-    let inputValue = document.querySelector(".search-input").value;
+    const inputValue = document.querySelector(".search-input").value;
 
     // 검색 결과 없을 시 에러 핸들링
     try {
